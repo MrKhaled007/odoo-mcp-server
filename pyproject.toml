@@ -1,0 +1,62 @@
+[project]
+name = "odoo-mcp-server"
+version = "0.1.0.dev0"
+description = "An MCP server exposing Odoo 19 data to AI assistants via XML-RPC, with a defense-in-depth security layer."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Mohammed Khaled", email = "mohammedkhaled0102001@gmail.com" }
+]
+requires-python = ">=3.11"
+keywords = ["odoo", "mcp", "ai", "llm", "claude", "xml-rpc"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Office/Business",
+]
+
+dependencies = [
+    "fastmcp>=2.0.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.3.0",
+    "mypy>=1.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/MrKhaled007/odoo-mcp-server"
+Repository = "https://github.com/MrKhaled007/odoo-mcp-server"
+Issues = "https://github.com/MrKhaled007/odoo-mcp-server/issues"
+
+[project.scripts]
+odoo-mcp-server = "odoo_mcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/odoo_mcp"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "S"]
+ignore = ["S101"]  # Allow assert statements in tests
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
