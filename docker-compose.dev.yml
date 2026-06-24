@@ -1,0 +1,50 @@
+version: "3.9"
+
+# ============================================================================
+# Development stack for odoo-mcp-server
+#
+# Runs ONLY Odoo 19 + PostgreSQL.  The MCP server runs on the host machine
+# (your laptop) and connects to Odoo at http://localhost:8069.
+#
+# This is the recommended setup while developing the MCP server itself.
+# For the full stack (MCP server inside Docker too) see docker-compose.yml.
+#
+# Usage:
+#   docker compose -f docker-compose.dev.yml up -d
+#   docker compose -f docker-compose.dev.yml logs -f odoo
+#   docker compose -f docker-compose.dev.yml down
+#   docker compose -f docker-compose.dev.yml down -v   # wipe data too
+# ============================================================================
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    volumes:
+      - odoo-mcp-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  odoo:
+    image: odoo:19
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+    volumes:
+      - odoo-mcp-web-data:/var/lib/odoo
+
+volumes:
+  odoo-mcp-db-data:
+  odoo-mcp-web-data:
