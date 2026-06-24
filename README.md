@@ -44,16 +44,16 @@ It is built **outside** Odoo on purpose. The server speaks to Odoo over XML-RPC 
 
 ## What v1 delivers
 
-By end of June 2026:
+By June 25, 2026:
 
-- ✅ 5 read-only tools covering partners, sales, inventory, and finance
-- ✅ 2 resources (schema introspection + company info)
-- ✅ Full security layer: authentication, RBAC, field whitelisting, rate limiting, audit logging
-- ✅ Docker Compose setup that boots Odoo 19 + Postgres + the MCP server in one command
-- ✅ Tested end-to-end against Claude Desktop
-- ✅ Demo video showing a real conversation with Claude over live Odoo data
-- ✅ Standalone design document (`AI_INTEGRATION_DESIGN.md`) discussing LLM-ERP integration trade-offs
-
+- 3 read-only tools covering partners, sales, and inventory
+- 1 resource for schema introspection
+- Full security layer: authentication, RBAC, field whitelisting, rate limiting, audit logging
+- Docker Compose setup that boots Odoo 19 + Postgres + the MCP server in one command
+- Tested end-to-end against Claude Desktop
+- Demo video showing a real conversation with Claude over live Odoo data
+- Standalone design document (`AI_INTEGRATION_DESIGN.md`) discussing LLM-ERP integration trade-offs
+- A `LEARNING_JOURNAL.md` documenting the day-by-day build journey
 ---
 
 ## Architecture
@@ -75,7 +75,7 @@ A full breakdown of each layer's responsibilities and rationale lives in [`docs/
 
 ---
 
-## The 5 Tools
+## The 3 Tools
 
 All tools in v1 are read-only. Each goes through the security layer before reaching Odoo.
 
@@ -116,42 +116,15 @@ Inventory levels for a product, optionally filtered by warehouse.
 
 Returns: list of products with quantity on hand per warehouse.
 
-### 4. `revenue_summary`
-
-Aggregated sales revenue over a date range, grouped by a chosen dimension.
-
-| Input | Type | Description |
-|---|---|---|
-| `date_from` | ISO date | Start of period |
-| `date_to` | ISO date | End of period |
-| `group_by` | enum | `customer`, `product`, `month`, `country` |
-
-Returns: list of aggregate rows with the grouping key and total revenue.
-
-### 5. `unpaid_invoices`
-
-Accounts receivable status — invoices that are open or overdue.
-
-| Input | Type | Description |
-|---|---|---|
-| `overdue_only` | bool (default false) | Show only past-due invoices |
-| `limit` | int (default 20, max 100) | Max records to return |
-
-Returns: list of invoices with id, partner, amount, due date, days overdue.
-
 ---
 
-## The 2 Resources
+## The 1 Resource
 
 Resources are read-only context endpoints that AI clients can subscribe to.
 
 ### `odoo://schema`
 
 Lists the Odoo models the server can read and their accessible fields, after the field whitelist is applied. Useful for an AI client to discover what it can ask for.
-
-### `odoo://company`
-
-Returns the current Odoo company record — name, country, currency, VAT, fiscal year setup. Provides context for any aggregation or reporting question.
 
 ---
 
@@ -271,18 +244,26 @@ MCP_AUDIT_PATH=./logs/audit.log
 
 ## Roadmap
 
-### v1 — End of June 2026
+### v1 — June 25, 2026
 
 - [x] Architecture and security model designed
 - [x] Repo skeleton + README
 - [ ] FastMCP server scaffold
 - [ ] Odoo client wrapper (read-only)
 - [ ] Security gate: auth, RBAC, whitelist, rate limit, audit
-- [ ] 5 tools implemented and tested end-to-end with Claude Desktop
-- [ ] 2 resources implemented
+- [ ] 3 tools implemented (search_partners, list_sale_orders, check_stock)
+- [ ] 1 resource (odoo://schema)
 - [ ] Docker Compose setup (Odoo 19 + Postgres + server)
 - [ ] Demo video (2 minutes)
-- [ ] `AI_INTEGRATION_DESIGN.md` design document
+- [ ] `AI_INTEGRATION_DESIGN.md`
+- [ ] `LEARNING_JOURNAL.md`
+
+### v1.1 — Mid-July 2026
+
+- [ ] Tool: `revenue_summary` (aggregated sales by period)
+- [ ] Tool: `unpaid_invoices` (accounts receivable status)
+- [ ] Resource: `odoo://company` (current company info)
+- [ ] Expanded test coverage
 
 ### v2 — Future
 
